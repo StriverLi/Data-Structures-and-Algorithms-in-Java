@@ -1,4 +1,4 @@
-package rucursion_and_backtracking;
+package recursion_and_backtracking;
 
 public class Hanio {
 

@@ -4,6 +4,7 @@ public class ListNode<T> {
 	private T data;
 	private ListNode<T> next;
 	
+	public ListNode(){} // 空参构造
 	public ListNode(T data){
 		this.data = data;
 	}
