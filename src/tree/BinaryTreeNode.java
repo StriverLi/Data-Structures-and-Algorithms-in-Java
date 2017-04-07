@@ -1,5 +1,6 @@
 package tree;
 
+import queue.LLQueue;
 import stack.LLStack;
 
 public class BinaryTreeNode<T> {
@@ -9,6 +10,7 @@ public class BinaryTreeNode<T> {
 	private T data;
 	private BinaryTreeNode<T> left;  // 左子树
 	private BinaryTreeNode<T> right; // 右子树
+	private static int preIndex = 0; // 在通过前序序列和中序序列构造二叉树是应用
 	
 	public BinaryTreeNode(){}; // 空参构造
 	public BinaryTreeNode(T data) { // 有参构造
@@ -37,7 +39,7 @@ public class BinaryTreeNode<T> {
 	
 	/***********************基本操作**************************/
 	
-	public void preOrder(BinaryTreeNode<T> root){ // 前序遍历递归算法
+	public static<T> void preOrder(BinaryTreeNode<T> root){ // 前序遍历递归算法
 		if(root != null){
 			System.out.println(root.getData());
 			preOrder(root.getLeft());
@@ -45,7 +47,7 @@ public class BinaryTreeNode<T> {
 		}
 	}
 	
-	public void inOrder(BinaryTreeNode<T> root){ // 中序遍历递归算法
+	public static<T> void inOrder(BinaryTreeNode<T> root){ // 中序遍历递归算法
 		if(root != null){
 			inOrder(root.getLeft());
 			System.out.println(root.getData());
@@ -53,7 +55,7 @@ public class BinaryTreeNode<T> {
 		}
 	}
 	
-	public void postOrder(BinaryTreeNode<T> root){ // 中后序遍历递归算法
+	public static<T> void postOrder(BinaryTreeNode<T> root){ // 中后序遍历递归算法
 		if(root != null){
 			postOrder(root.getLeft());
 			postOrder(root.getRight());
@@ -61,7 +63,7 @@ public class BinaryTreeNode<T> {
 		}
 	}
 	
-	public void preOrderNonRecursion(BinaryTreeNode<T> root){ // 非递归前序遍历
+	public static<T> void preOrderNonRecursion(BinaryTreeNode<T> root){ // 非递归前序遍历
 		LLStack<BinaryTreeNode<T>> stack = new LLStack<>();
 		while(true){
 			while(root != null){
@@ -75,7 +77,7 @@ public class BinaryTreeNode<T> {
 		}
 	}
 	
-	public void inOrderNonRecursion(BinaryTreeNode<T> root){ // 非递归中序遍历
+	public static<T> void inOrderNonRecursion(BinaryTreeNode<T> root){ // 非递归中序遍历
 		LLStack<BinaryTreeNode<T>> stack = new LLStack<>();
 		while(true){
 			while(root != null){
@@ -90,7 +92,7 @@ public class BinaryTreeNode<T> {
 		}
 	}
 	
-	public void postOrderNonRecursion(BinaryTreeNode<T> root){ // 后序遍历非递归算法
+	public static<T> void postOrderNonRecursion(BinaryTreeNode<T> root){ // 后序遍历非递归算法
 		LLStack<BinaryTreeNode<T>> stack = new LLStack<>();
 		while(true){
 			if(root != null){
@@ -108,6 +110,83 @@ public class BinaryTreeNode<T> {
 					root = stack.getTop().getRight();
 			}
 		}
+	}
+	
+	public static<T> void levelOrder(BinaryTreeNode<T> root){ // 层次遍历
+		LLQueue<BinaryTreeNode<T>> queue = new LLQueue<>();
+		BinaryTreeNode<T> temp;
+		if(root == null)
+			return;
+		queue.enQueue(root);
+		while(!queue.isEmpty()){
+			temp = queue.deQueue();
+			System.out.println(temp.getData());
+			if(temp.getLeft() != null)
+				queue.enQueue(temp.getLeft());
+			if(temp.getRight() != null)
+				queue.enQueue(temp.getRight());
+		}
+	}
+	
+	/**
+	 * 通过中序序列和前序序列建立二叉树算法步骤
+	 
+	 * 1、从前序序列中取一个元素，然后将前序序列索引加一
+	 * 2、根据所选元素的值，创建一个新的树节点(root)
+	 * 3、查找所选结点在中序序列中的索引，用变量tempIndex标记
+	 * 4、递归调用BuildBinaryTree为tempIndex之前的所有结点构建一棵子树，并将其作为root的左子树
+	 * 5、递归调用BuildBinaryTree为tempIndex之后的所有结点构建一课子树，并将其作为root的右子树
+	 * 6、返回root
+	 * 参数解释：
+	 * 		inOrder:中序序列数组
+	 * 		preOrder:前序序列数组
+	 * 		inStart:在中序遍历中查找所选结点的起始位置
+	 * 		inEnd:在中序遍历序列中查找所选结点的结束位置
+	 */
+	@SuppressWarnings("unchecked")
+	public static<T> BinaryTreeNode<T> buildBinaryTree(Object[] inOrder, Object[] preOrder, int inStart, int inEnd){
+		if(inStart > inEnd){
+			return null;
+		}
+		T temp = (T)preOrder[preIndex];
+		preIndex++; // 前序序列索引加一
+		BinaryTreeNode<T> root = new BinaryTreeNode<T>(temp);
+		if(inStart == inEnd){
+			return root;
+		}
+		int tempindex = 0;
+		for(int i = inStart; i <= inEnd; ++i){ // 查找temp在中序遍历序列中的位置
+			if((T)inOrder[i] == temp){
+				tempindex = i;
+				break;
+			}
+		}
+		root.setLeft(buildBinaryTree(inOrder, preOrder, inStart, tempindex-1));
+		root.setRight(buildBinaryTree(inOrder, preOrder, tempindex+1, inEnd));
+		return root;
+		
+	}
+	
+	public static<T> BinaryTreeNode<T> mirrorOfBinaryTree(BinaryTreeNode<T> root){ // 反转二叉树
+		BinaryTreeNode<T> temp;
+		if(root != null){
+			mirrorOfBinaryTree(root.getLeft());
+			mirrorOfBinaryTree(root.getRight());
+			temp = root.getLeft();
+			root.setLeft(root.getRight());
+			root.setRight(temp);
+		}
+		return root;
+	}
+	
+	public static<T> boolean areMirrors(BinaryTreeNode<T> root1, BinaryTreeNode<T> root2){ // 判断两棵二叉树是否互为反转二叉树
+		if(root1 == null && root2 == null)
+			return true;
+		if(root1 == null || root2 == null)
+			return false;
+		if(root1.getData() != root2.getData())
+			return false;
+		else return areMirrors(root1.getLeft(), root2.getLeft()) && areMirrors(root1.getRight(), root2.getRight());
 	}
 	
 }
