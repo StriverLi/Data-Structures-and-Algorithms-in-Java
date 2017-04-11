@@ -1,6 +1,8 @@
 package tree;
 
+import queue.DynArrayQueue;
 import queue.LLQueue;
+import stack.DynArrayStack;
 import stack.LLStack;
 
 public class BinaryTreeNode<T> {
@@ -179,6 +181,7 @@ public class BinaryTreeNode<T> {
 		return root;
 	}
 	
+	
 	public static<T> boolean areMirrors(BinaryTreeNode<T> root1, BinaryTreeNode<T> root2){ // 判断两棵二叉树是否互为反转二叉树
 		if(root1 == null && root2 == null)
 			return true;
@@ -187,6 +190,87 @@ public class BinaryTreeNode<T> {
 		if(root1.getData() != root2.getData())
 			return false;
 		else return areMirrors(root1.getLeft(), root2.getLeft()) && areMirrors(root1.getRight(), root2.getRight());
+	}
+	
+	public static<T> int heightOfBinaryTreeInRecursion(BinaryTreeNode<T> root){ // 求二叉树的深度递归算法
+		int leftHeight,rightHeight;
+		if(root == null)
+			return 0;
+		leftHeight = heightOfBinaryTreeInRecursion(root.getLeft());
+		rightHeight = heightOfBinaryTreeInRecursion(root.getRight());
+		if(leftHeight > rightHeight)
+			return (leftHeight+1);
+		else 
+			return (rightHeight+1);
+	}
+	
+	public static<T> int heightOfBinaryTree(BinaryTreeNode<T> root){ // 求二叉树深度的非递归算法
+		if(root == null)
+			return 0;
+		DynArrayQueue<BinaryTreeNode<T>> queue = new DynArrayQueue<>();
+		queue.enQueue(root);
+		queue.enQueue(null); // 作为分层的标记
+		int count = 0; // 第一层
+		while(!queue.isEmpty()){
+			root = queue.deQueue();
+			if(root == null){ // 如果一层结束
+				if(!queue.isEmpty()) // 为下一层添加标记
+					queue.enQueue(null);
+				count++;
+			} else {
+				if(root.getLeft() != null)
+					queue.enQueue(root.getLeft());
+				if(root.getRight() != null)
+					queue.enQueue(root.getRight());
+			}
+		}
+		return count;
+	}
+	
+	public static<T> void levelOrderTraversalInReverse(BinaryTreeNode<T> root){ // 逆向逐层输出元素
+		if(root == null)
+			return;
+		DynArrayQueue<BinaryTreeNode<T>> queue = new DynArrayQueue<>();
+		DynArrayStack<BinaryTreeNode<T>> stack = new DynArrayStack<>();
+		queue.enQueue(root);
+		while(!queue.isEmpty()){
+			root = queue.deQueue();
+			if(root.getRight() != null)
+				queue.enQueue(root.getRight());
+			if(root.getLeft() != null)
+				queue.enQueue(root.getLeft());
+			stack.push(root);
+		}
+		while(!stack.isEmpty())
+			System.out.print(stack.pop().getData() + " ");
+	}
+	
+	public static<T> int numOfLeaves(BinaryTreeNode<T> root){ // 获取二叉树叶子节点的个数的非递归算法
+		if(root == null)
+			return 0;
+		DynArrayQueue<BinaryTreeNode<T>> queue = new DynArrayQueue<>();
+		queue.enQueue(root);
+		int count = 0;
+		while(!queue.isEmpty()){
+			root = queue.deQueue();
+			if(root.getLeft() == null && root.getRight() == null){
+				count++;
+			} else {
+				if(root.getLeft() != null)
+					queue.enQueue(root.getLeft());
+				if(root.getRight() != null)
+					queue.enQueue(root.getRight());
+			}
+		}
+		return count;
+	}
+	
+	public static<T> int numOfLeavesInRecursion(BinaryTreeNode<T> root){ // 获取二叉树叶子节点的个数的递归算法
+		if(root == null)
+			return 0;
+		if(root.getLeft() == null && root.getRight() == null)
+			return 1;
+		return numOfLeavesInRecursion(root.getLeft()) + numOfLeavesInRecursion(root.getRight());
 	}
 	
 }
