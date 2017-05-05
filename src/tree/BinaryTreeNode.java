@@ -273,4 +273,31 @@ public class BinaryTreeNode<T> {
 		return numOfLeavesInRecursion(root.getLeft()) + numOfLeavesInRecursion(root.getRight());
 	}
 	
+	public static<T> BinaryTreeNode<T> LCA(BinaryTreeNode<T> root, BinaryTreeNode<T> a, BinaryTreeNode<T> b){
+		// 查找a,b结点的父结点
+		BinaryTreeNode<T> left,right;
+		if(root == null)
+			return root;
+		if(root.data == a.data || root.data == b.data)
+			return root;
+		left = LCA(root.getLeft(),a,b);
+		right = LCA(root.getRight(),a,b);
+		if(left != null && right != null)
+			return root;
+		else
+			return left == null ? right : left;
+	}
+	
+	public static<T> int printAllAncestors(BinaryTreeNode<T> root, BinaryTreeNode<T> node){
+		// 求结点node的所有祖先结点
+		if(root == null || root.getLeft() == null || root.getRight() == null)
+			return 0;
+		if(root.getLeft().data == node.data || root.getRight().data == node.data
+				|| printAllAncestors(root.getLeft(),node) == 1 || printAllAncestors(root.getRight(), node) == 1){
+			System.out.println(root.getData());
+			return 1;
+		}
+		return 0;
+	}
+	
 }
