@@ -9,7 +9,6 @@ public class ReverseStack {
 	 * 		1.只能使用栈操作push和pop
 	 * 		2.不能使用其他的类似于数组、字符串等做过渡
 	 */
-
 	public static void main(String[] args) {
 		Stack<Integer> st = new Stack<>();
 		st.push(1);
@@ -19,9 +18,7 @@ public class ReverseStack {
 		System.out.println("反转前： " +st.toString());
 		reverseStack(st);
 		System.out.println("反转后：" + st.toString());
-		
 	}
-	
 	public static<T> void reverseStack(Stack<T> stack){
 		if(stack.isEmpty())
 			return;
